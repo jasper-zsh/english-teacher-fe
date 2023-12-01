@@ -1,5 +1,5 @@
 <template>
-    <div class="chat-box">
+    <div class="chat-box" @mouseup="stopSpeaking" @mouseleave="stopSpeaking">
         <div class="messages">
             <el-scrollbar ref="scrollbarRef" height="100%">
                 <div ref="innerRef">
@@ -16,7 +16,12 @@
         
         <div class="action-bar">
             <el-input v-model="text" class="input-box" />
-            <el-button type="primary" @click="sendTextMessage">Send</el-button>
+            <el-button type="primary" @click="sendTextMessage" v-if="text.length > 0">Send</el-button>
+            <el-button type="primary" v-else @mousedown="startSpeaking">Speak</el-button>
+        </div>
+
+        <div class="speaking" v-if="speaking">
+            Speaking
         </div>
     </div>
 </template>
@@ -34,6 +39,7 @@ const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const innerRef = ref<HTMLDivElement>()
 const messages = ref<Message[]>([])
 const text = ref('')
+const speaking = ref(false)
 
 let ws: WebSocket
 
@@ -111,6 +117,48 @@ const sendTextMessage = () => {
     text.value = ''
 }
 
+let recorder: MediaRecorder|undefined
+let recordTicker: number|undefined
+
+const startSpeaking = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus',
+        audioBitsPerSecond: 16000,
+    });
+    recorder.ondataavailable = async (e) => {
+        const data = arrayBufferToBase64(await e.data.arrayBuffer());
+        console.log(data);
+    }
+    recorder.audioBitsPerSecond
+    recorder.start()
+    recordTicker = setInterval(() => {
+        recorder?.requestData()
+    }, 1000)
+    speaking.value = true
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+    let binary = '';
+    let bytes = new Uint8Array(buffer);
+    let len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+const stopSpeaking = () => {
+    if (!speaking.value) {
+        return
+    }
+    clearInterval(recordTicker)
+    recordTicker = undefined
+    recorder?.stop()
+    recorder = undefined
+    speaking.value = false
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -118,6 +166,9 @@ const sendTextMessage = () => {
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
 
     .messages {
         flex: 1;
@@ -150,5 +201,18 @@ const sendTextMessage = () => {
     }
 }
 
+.speaking {
+    width: 100px;
+    height: 100px;
+    background-color: #00000080;
+    border-radius: 10px;
+    position: absolute;
+    left: calc(50% - 50px);
+    top: calc(50% - 50px);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 </style>
