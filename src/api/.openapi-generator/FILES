@@ -3,6 +3,7 @@ apis/ClientApi.ts
 apis/index.ts
 index.ts
 models/AdminAssistant.ts
+models/AdminAssistantsPostRequest.ts
 models/ClientAssistant.ts
 models/Conversation.ts
 models/ConversationsPostRequest.ts

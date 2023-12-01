@@ -14,9 +14,19 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  AdminAssistant,
+  AdminAssistantsPostRequest,
+} from '../models/index';
+import {
+    AdminAssistantFromJSON,
+    AdminAssistantToJSON,
+    AdminAssistantsPostRequestFromJSON,
+    AdminAssistantsPostRequestToJSON,
+} from '../models/index';
 
-export interface AdminAssistantsPostRequest {
-    body?: object;
+export interface AdminAssistantsPostOperationRequest {
+    adminAssistantsPostRequest?: AdminAssistantsPostRequest;
 }
 
 /**
@@ -33,29 +43,29 @@ export interface AdminApiInterface {
      * @throws {RequiredError}
      * @memberof AdminApiInterface
      */
-    adminAssistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string>>>;
+    adminAssistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminAssistant>>>;
 
     /**
      * 
      * List assistants
      */
-    adminAssistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>>;
+    adminAssistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminAssistant>>;
 
     /**
      * 
      * @summary Create assistant
-     * @param {object} [body] 
+     * @param {AdminAssistantsPostRequest} [adminAssistantsPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AdminApiInterface
      */
-    adminAssistantsPostRaw(requestParameters: AdminAssistantsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
+    adminAssistantsPostRaw(requestParameters: AdminAssistantsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AdminAssistant>>;
 
     /**
      * 
      * Create assistant
      */
-    adminAssistantsPost(requestParameters: AdminAssistantsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
+    adminAssistantsPost(requestParameters: AdminAssistantsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AdminAssistant>;
 
 }
 
@@ -68,7 +78,7 @@ export class AdminApi extends runtime.BaseAPI implements AdminApiInterface {
      * 
      * List assistants
      */
-    async adminAssistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string>>> {
+    async adminAssistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminAssistant>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -80,14 +90,14 @@ export class AdminApi extends runtime.BaseAPI implements AdminApiInterface {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AdminAssistantFromJSON));
     }
 
     /**
      * 
      * List assistants
      */
-    async adminAssistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>> {
+    async adminAssistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminAssistant>> {
         const response = await this.adminAssistantsGetRaw(initOverrides);
         return await response.value();
     }
@@ -96,7 +106,7 @@ export class AdminApi extends runtime.BaseAPI implements AdminApiInterface {
      * 
      * Create assistant
      */
-    async adminAssistantsPostRaw(requestParameters: AdminAssistantsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async adminAssistantsPostRaw(requestParameters: AdminAssistantsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AdminAssistant>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -108,17 +118,17 @@ export class AdminApi extends runtime.BaseAPI implements AdminApiInterface {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters.body as any,
+            body: AdminAssistantsPostRequestToJSON(requestParameters.adminAssistantsPostRequest),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => AdminAssistantFromJSON(jsonValue));
     }
 
     /**
      * 
      * Create assistant
      */
-    async adminAssistantsPost(requestParameters: AdminAssistantsPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async adminAssistantsPost(requestParameters: AdminAssistantsPostOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AdminAssistant> {
         const response = await this.adminAssistantsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
