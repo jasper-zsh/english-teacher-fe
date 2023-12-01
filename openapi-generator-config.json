@@ -1,0 +1,9 @@
+{
+    "apiPackage": "english-teacher-api",
+    "modelPackage": "english-teacher-model",
+    "ensureUniqueParams": true,
+    "sortModelPropertiesByRequiredFlag": true,
+    "sortParamsByRequiredFlag": true,
+    "withInterfaces": true,
+    "withSeparateModelsAndApi": true
+}

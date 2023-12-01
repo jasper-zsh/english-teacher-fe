@@ -1,0 +1,12 @@
+apis/AdminApi.ts
+apis/ClientApi.ts
+apis/index.ts
+index.ts
+models/AdminAssistant.ts
+models/ClientAssistant.ts
+models/Conversation.ts
+models/ConversationsPostRequest.ts
+models/Message.ts
+models/WsResponse.ts
+models/index.ts
+runtime.ts
