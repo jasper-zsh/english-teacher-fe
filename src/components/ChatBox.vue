@@ -1,90 +1,68 @@
 <template>
-    <div class="chat-box" @mouseup="stopSpeaking" @mouseleave="stopSpeaking">
+    <div class="chat-box">
         <div class="messages">
-            <el-scrollbar ref="scrollbarRef" height="100%">
+            <van-list v-if="ws">
                 <div ref="innerRef">
-                    <div v-for="msg in messages" :key="msg.id">
-                        <div class="warpper" :class="{left: msg.role === 'assistant', right: msg.role === 'user'}">
-                            <div class="bubble" :class="{local: msg.role === 'user', remote: msg.role === 'assistant'}">
-                                {{ msg.text }}
-                            </div>
-                        </div>
-                    </div>
+                    <ChatMessage
+                        :ref="msgRef"
+                        v-for="msg in messages"
+                        :key="msg.id"
+                        :message="msg"
+                        @tts="tts"
+                    />
                 </div>
-            </el-scrollbar>
+            </van-list>
         </div>
         
         <div class="action-bar">
-            <el-input v-model="text" class="input-box" />
-            <el-button type="primary" @click="sendTextMessage" v-if="text.length > 0">Send</el-button>
-            <el-button type="primary" v-else @mousedown="startSpeaking">Speak</el-button>
+            <van-field v-model="text" class="input-box" x-webkit-speech />
+            <van-button type="primary" @click="sendTextMessage" v-if="text.length > 0">Send</van-button>
+            <van-button type="primary" v-else @click="startSpeaking">Click to Speak</van-button>
         </div>
 
-        <div class="speaking" v-if="speaking">
-            Speaking
+        <div class="speaking" v-if="speaking" @click="stopSpeaking">
+            Click to stop speaking
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue';
-import { type Message, WsResponseFromJSON } from '@/api'
-import type { ElScrollbar } from 'element-plus';
+import { useScrollParent } from '@vant/use';
+import { type Message } from '@/api'
+import ChatMessage from './ChatMessage.vue'
+import { WebSocketEmitter } from '@/utils/websocket'
 
 const props = defineProps<{
-    conversationId: number
+    conversationId: string
 }>()
 
-const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const innerRef = ref<HTMLDivElement>()
+const listScroll = useScrollParent(innerRef);
 const messages = ref<Message[]>([])
 const text = ref('')
 const speaking = ref(false)
-
-let ws: WebSocket
+const ws = ref<WebSocketEmitter>()
+const msgRefs: {[key: string]: InstanceType<typeof ChatMessage>} = {}
 
 const connect = () => {
-    ws = new WebSocket('ws://localhost:3000')
-    ws.onopen = wsOnOpen
-    ws.onerror = wsOnError
-    ws.onmessage = wsOnMessage
-}
-
-const disconnect = () => {
-    ws.close()
-}
-
-const wsOnOpen = (e: Event) => {
-    console.log('connected', e)
-    send('start', {
-        id: props.conversationId
-    })
-}
-
-const wsOnError = (e: Event) => {
-    console.log('websocket error, reconnect',e)
-    connect()
-}
-
-const wsOnMessage = (e: any) => {
-    console.log('got message', e)
-    const msg = WsResponseFromJSON(JSON.parse(e.data))
-    switch (msg.event) {
-        case 'started':
-            loadMessages()
-            break
-        case 'msg_forward':
-            gotForwardMessage(msg.data)
-            break
+    // @ts-ignore
+    ws.value = new WebSocketEmitter(import.meta.env.VITE_WS_ENDPOINT)
+    ws.value.onOpen = () => {
+        console.log('connected')
+        ws.value?.send('start', {
+            id: props.conversationId
+        })
     }
+    ws.value.on('started', loadMessages)
+    ws.value.on('msg_forward', gotForwardMessage)
+    ws.value.on('voice_response', playVoice)
 }
 
-const send = (event: string, data: any) => {
-    console.log('send', event, data)
-    ws.send(JSON.stringify({
-        event,
-        data
-    }))
+const msgRef = (el: InstanceType<typeof ChatMessage>, refs: Record<string, any>) => {
+    if (el) {
+        msgRefs[el.$props.message.id] = el
+    }
 }
 
 onMounted(() => {
@@ -92,27 +70,35 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    disconnect()
+    ws.value?.disconnect()
 })
 
 const gotForwardMessage = (msg: any) => {
     messages.value.push(msg)
     nextTick(() => {
-        scrollbarRef.value?.setScrollTop(innerRef.value!.clientHeight)
+        const lastMsg = msgRefs[messages.value[messages.value.length - 1].id]
+        console.log(lastMsg.$el)
+        lastMsg.$el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+        })
+        // listScroll.value?.scrollTo({
+        //     top: innerRef.value!.clientHeight
+        // })
     })
 }
 
 const loadMessages = () => {
-    send('loadMessages', {
+    ws.value?.send('load_messages', {
         direction: 'FORWARD',
-        cursor: messages.value.length > 0 ? messages.value[messages.value.length - 1].id : undefined,
+        cursor: messages.value.length > 0 ? messages.value[messages.value.length - 1].createdAt : undefined,
     })
 }
 
 const sendTextMessage = () => {
-    send('chatText', {
+    ws.value?.send('chat_text', {
         text: text.value,
-        cursor: messages.value.length > 0 ? messages.value[messages.value.length - 1].id : undefined,
+        cursor: messages.value.length > 0 ? messages.value[messages.value.length - 1].createdAt : undefined,
     })
     text.value = ''
 }
@@ -122,13 +108,19 @@ let recordTicker: number|undefined
 
 const startSpeaking = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    ws.value?.send('speaking')
+
     recorder = new MediaRecorder(stream, {
         mimeType: 'audio/webm;codecs=opus',
         audioBitsPerSecond: 16000,
     });
     recorder.ondataavailable = async (e) => {
         const data = arrayBufferToBase64(await e.data.arrayBuffer());
-        console.log(data);
+        ws.value?.send('audio_data', data)
+        if (!speaking.value) {
+            ws.value?.send('speaking_end')
+        }
     }
     recorder.audioBitsPerSecond
     recorder.start()
@@ -159,56 +151,44 @@ const stopSpeaking = () => {
     speaking.value = false
 }
 
+const playVoice = (data: { message: Message, voice: string }) => {
+    msgRefs[data.message.id].play(data.voice)
+}
+
+const tts = (msg: Message) => {
+    ws.value?.send('tts', msg)
+}
+
 </script>
 
 <style lang="less" scoped>
 .chat-box {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    overflow: hidden;
     position: relative;
     left: 0;
     top: 0;
 
     .messages {
         flex: 1;
-        overflow: hidden;
-
-        .bubble {
-            width: fit-content;
-            max-width: 80%;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 10px;
-            background-color: #eee;
-        }
-
-        .right {
-            display: flex;
-            justify-content: end;
-        }
-
-        .local {
-        }
-
-        .remote {
-
-        }
+        overflow: scroll;
+        padding: 0 1rem;
     }
 
     .action-bar {
         display: flex;
+        padding: 0.5rem;
     }
 }
 
 .speaking {
-    width: 100px;
-    height: 100px;
-    background-color: #00000080;
-    border-radius: 10px;
+    width: 100%;
+    height: 4rem;
+    background-color: #252525;
     position: absolute;
-    left: calc(50% - 50px);
-    top: calc(50% - 50px);
+    bottom: 0;
+    border-radius: 1rem 1rem 0 0;
     color: white;
     display: flex;
     justify-content: center;

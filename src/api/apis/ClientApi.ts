@@ -15,21 +15,19 @@
 
 import * as runtime from '../runtime';
 import type {
-  ClientAssistant,
   Conversation,
-  ConversationsPostRequest,
 } from '../models/index';
 import {
-    ClientAssistantFromJSON,
-    ClientAssistantToJSON,
     ConversationFromJSON,
     ConversationToJSON,
-    ConversationsPostRequestFromJSON,
-    ConversationsPostRequestToJSON,
 } from '../models/index';
 
-export interface ConversationsPostOperationRequest {
-    conversationsPostRequest?: ConversationsPostRequest;
+export interface ConversationsConversationIdDeleteRequest {
+    conversationId: string;
+}
+
+export interface ConversationsPostRequest {
+    body?: object;
 }
 
 /**
@@ -41,18 +39,19 @@ export interface ConversationsPostOperationRequest {
 export interface ClientApiInterface {
     /**
      * 
-     * @summary List assistants
+     * @summary Delete conversation
+     * @param {string} conversationId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ClientApiInterface
      */
-    assistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ClientAssistant>>>;
+    conversationsConversationIdDeleteRaw(requestParameters: ConversationsConversationIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
 
     /**
      * 
-     * List assistants
+     * Delete conversation
      */
-    assistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ClientAssistant>>;
+    conversationsConversationIdDelete(requestParameters: ConversationsConversationIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
 
     /**
      * 
@@ -72,18 +71,18 @@ export interface ClientApiInterface {
     /**
      * 
      * @summary Create conversation
-     * @param {ConversationsPostRequest} [conversationsPostRequest] 
+     * @param {object} [body] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ClientApiInterface
      */
-    conversationsPostRaw(requestParameters: ConversationsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>>;
+    conversationsPostRaw(requestParameters: ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>>;
 
     /**
      * 
      * Create conversation
      */
-    conversationsPost(requestParameters: ConversationsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation>;
+    conversationsPost(requestParameters: ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation>;
 
 }
 
@@ -94,29 +93,33 @@ export class ClientApi extends runtime.BaseAPI implements ClientApiInterface {
 
     /**
      * 
-     * List assistants
+     * Delete conversation
      */
-    async assistantsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ClientAssistant>>> {
+    async conversationsConversationIdDeleteRaw(requestParameters: ConversationsConversationIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.conversationId === null || requestParameters.conversationId === undefined) {
+            throw new runtime.RequiredError('conversationId','Required parameter requestParameters.conversationId was null or undefined when calling conversationsConversationIdDelete.');
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/assistants`,
-            method: 'GET',
+            path: `/conversations/{conversationId}`.replace(`{${"conversationId"}}`, encodeURIComponent(String(requestParameters.conversationId))),
+            method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ClientAssistantFromJSON));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
      * 
-     * List assistants
+     * Delete conversation
      */
-    async assistantsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ClientAssistant>> {
-        const response = await this.assistantsGetRaw(initOverrides);
+    async conversationsConversationIdDelete(requestParameters: ConversationsConversationIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.conversationsConversationIdDeleteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -152,7 +155,7 @@ export class ClientApi extends runtime.BaseAPI implements ClientApiInterface {
      * 
      * Create conversation
      */
-    async conversationsPostRaw(requestParameters: ConversationsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>> {
+    async conversationsPostRaw(requestParameters: ConversationsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -164,7 +167,7 @@ export class ClientApi extends runtime.BaseAPI implements ClientApiInterface {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: ConversationsPostRequestToJSON(requestParameters.conversationsPostRequest),
+            body: requestParameters.body as any,
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ConversationFromJSON(jsonValue));
@@ -174,7 +177,7 @@ export class ClientApi extends runtime.BaseAPI implements ClientApiInterface {
      * 
      * Create conversation
      */
-    async conversationsPost(requestParameters: ConversationsPostOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation> {
+    async conversationsPost(requestParameters: ConversationsPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation> {
         const response = await this.conversationsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }

@@ -30,6 +30,12 @@ export interface Message {
      * @type {string}
      * @memberof Message
      */
+    conversationId: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Message
+     */
     role: string;
     /**
      * 
@@ -37,6 +43,12 @@ export interface Message {
      * @memberof Message
      */
     text: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Message
+     */
+    createdAt: string;
 }
 
 /**
@@ -45,8 +57,10 @@ export interface Message {
 export function instanceOfMessage(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
+    isInstance = isInstance && "conversationId" in value;
     isInstance = isInstance && "role" in value;
     isInstance = isInstance && "text" in value;
+    isInstance = isInstance && "createdAt" in value;
 
     return isInstance;
 }
@@ -62,8 +76,10 @@ export function MessageFromJSONTyped(json: any, ignoreDiscriminator: boolean): M
     return {
         
         'id': json['id'],
+        'conversationId': json['conversationId'],
         'role': json['role'],
         'text': json['text'],
+        'createdAt': json['createdAt'],
     };
 }
 
@@ -77,8 +93,10 @@ export function MessageToJSON(value?: Message | null): any {
     return {
         
         'id': value.id,
+        'conversationId': value.conversationId,
         'role': value.role,
         'text': value.text,
+        'createdAt': value.createdAt,
     };
 }
 

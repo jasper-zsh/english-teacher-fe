@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './AdminAssistant';
-export * from './AdminAssistantsPostRequest';
-export * from './ClientAssistant';
 export * from './Conversation';
-export * from './ConversationsPostRequest';
+export * from './LoginRequest';
+export * from './LoginResponse';
 export * from './Message';
+export * from './RegisterRequest';
+export * from './User';
 export * from './WsResponse';

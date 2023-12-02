@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Message } from './Message';
+import {
+    MessageFromJSON,
+    MessageFromJSONTyped,
+    MessageToJSON,
+} from './Message';
+
 /**
  * 
  * @export
@@ -21,34 +28,28 @@ import { exists, mapValues } from '../runtime';
 export interface Conversation {
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Conversation
      */
-    id: number;
+    id: string;
     /**
      * 
      * @type {string}
      * @memberof Conversation
      */
-    provider: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Conversation
-     */
-    assistantId: number;
+    userId: string;
     /**
      * 
      * @type {string}
      * @memberof Conversation
      */
-    name?: string;
+    createdAt: string;
     /**
      * 
-     * @type {string}
+     * @type {Array<Message>}
      * @memberof Conversation
      */
-    metadata?: string;
+    messages?: Array<Message> | null;
 }
 
 /**
@@ -57,8 +58,8 @@ export interface Conversation {
 export function instanceOfConversation(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
-    isInstance = isInstance && "provider" in value;
-    isInstance = isInstance && "assistantId" in value;
+    isInstance = isInstance && "userId" in value;
+    isInstance = isInstance && "createdAt" in value;
 
     return isInstance;
 }
@@ -74,10 +75,9 @@ export function ConversationFromJSONTyped(json: any, ignoreDiscriminator: boolea
     return {
         
         'id': json['id'],
-        'provider': json['provider'],
-        'assistantId': json['assistantId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+        'userId': json['userId'],
+        'createdAt': json['createdAt'],
+        'messages': !exists(json, 'messages') ? undefined : (json['messages'] === null ? null : (json['messages'] as Array<any>).map(MessageFromJSON)),
     };
 }
 
@@ -91,10 +91,9 @@ export function ConversationToJSON(value?: Conversation | null): any {
     return {
         
         'id': value.id,
-        'provider': value.provider,
-        'assistantId': value.assistantId,
-        'name': value.name,
-        'metadata': value.metadata,
+        'userId': value.userId,
+        'createdAt': value.createdAt,
+        'messages': value.messages === undefined ? undefined : (value.messages === null ? null : (value.messages as Array<any>).map(MessageToJSON)),
     };
 }
 

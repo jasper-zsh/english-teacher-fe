@@ -8,8 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ChatBox: typeof import('./src/components/ChatBox.vue')['default']
+    ChatBubble: typeof import('./src/components/ChatBubble.vue')['default']
+    ChatMessage: typeof import('./src/components/ChatMessage.vue')['default']
     ConversationList: typeof import('./src/components/ConversationList.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
@@ -21,6 +24,20 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
+    VanButton: typeof import('vant/es')['Button']
+    VanCell: typeof import('vant/es')['Cell']
+    VanCellGroup: typeof import('vant/es')['CellGroup']
+    VanField: typeof import('vant/es')['Field']
+    VanForm: typeof import('vant/es')['Form']
+    VanList: typeof import('vant/es')['List']
+    VanLoading: typeof import('vant/es')['Loading']
+    VanNavBar: typeof import('vant/es')['NavBar']
+    VanPasswordInput: typeof import('vant/es')['PasswordInput']
+    VanPullRefresh: typeof import('vant/es')['PullRefresh']
+    VanSwipeCell: typeof import('vant/es')['SwipeCell']
+    VanTabbar: typeof import('vant/es')['Tabbar']
+    VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
   export interface ComponentCustomProperties {

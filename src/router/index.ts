@@ -1,13 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ConversationListView from '@/views/ConversationListView.vue'
+import MainView from '@/views/MainView.vue'
 
 const router = createRouter({
+  // @ts-ignore
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: ConversationListView
+      name: 'main',
+      component: MainView,
+      children: [
+        {
+          path: '',
+          name: 'conversations',
+          component: () => import('@/views/ConversationListView.vue')
+        },
+        {
+          path: '/profile',
+          name: 'profile',
+          component: () => import('@/views/ProfileView.vue')
+        }
+      ]
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
     },
     {
       path: '/conversations/:id',
@@ -15,14 +33,6 @@ const router = createRouter({
       component: () => import('../views/ConversationView.vue'),
       props: true
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
   ]
 })
 

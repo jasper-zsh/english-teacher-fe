@@ -16,50 +16,58 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ClientAssistant
+ * @interface User
  */
-export interface ClientAssistant {
-    /**
-     * 
-     * @type {number}
-     * @memberof ClientAssistant
-     */
-    id: number;
+export interface User {
     /**
      * 
      * @type {string}
-     * @memberof ClientAssistant
+     * @memberof User
      */
-    name: string;
+    id: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    createdAt: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    updatedAt: string;
 }
 
 /**
- * Check if a given object implements the ClientAssistant interface.
+ * Check if a given object implements the User interface.
  */
-export function instanceOfClientAssistant(value: object): boolean {
+export function instanceOfUser(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
-    isInstance = isInstance && "name" in value;
+    isInstance = isInstance && "createdAt" in value;
+    isInstance = isInstance && "updatedAt" in value;
 
     return isInstance;
 }
 
-export function ClientAssistantFromJSON(json: any): ClientAssistant {
-    return ClientAssistantFromJSONTyped(json, false);
+export function UserFromJSON(json: any): User {
+    return UserFromJSONTyped(json, false);
 }
 
-export function ClientAssistantFromJSONTyped(json: any, ignoreDiscriminator: boolean): ClientAssistant {
+export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'id': json['id'],
-        'name': json['name'],
+        'createdAt': json['createdAt'],
+        'updatedAt': json['updatedAt'],
     };
 }
 
-export function ClientAssistantToJSON(value?: ClientAssistant | null): any {
+export function UserToJSON(value?: User | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -69,7 +77,8 @@ export function ClientAssistantToJSON(value?: ClientAssistant | null): any {
     return {
         
         'id': value.id,
-        'name': value.name,
+        'createdAt': value.createdAt,
+        'updatedAt': value.updatedAt,
     };
 }
 
