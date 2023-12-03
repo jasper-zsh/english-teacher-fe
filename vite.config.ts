@@ -15,7 +15,7 @@ export default defineConfig({
     vueJsx(),
     Components({
       resolvers: [VantResolver()],
-    })
+    }),
   ],
   resolve: {
     alias: {

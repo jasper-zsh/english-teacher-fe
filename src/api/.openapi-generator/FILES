@@ -8,9 +8,15 @@ models/LoginRequest.ts
 models/LoginResponse.ts
 models/Message.ts
 models/RegisterRequest.ts
+models/StudyList.ts
+models/StudylistsGet200Response.ts
+models/StudylistsIdWordPostRequest.ts
+models/StudylistsIdWordsGet200Response.ts
+models/StudylistsPostRequest.ts
 models/User.ts
 models/WordDefinition.ts
 models/WordEntry.ts
+models/WordInStudyList.ts
 models/WsResponse.ts
 models/index.ts
 runtime.ts

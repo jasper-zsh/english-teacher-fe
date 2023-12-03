@@ -1,18 +1,23 @@
 <template>
     <div class="word-entry" :style="{height: height ? `${height}px` : '100%'}">
-        <div class="result" v-if="wordEntry">
-            <div class="word">{{ wordEntry?.word }}</div>
-            <div
-                class="definition"
-                v-for="def, idx in wordEntry?.definitions"
-                :key="idx"
-            >
-                <div class="part">{{ def.part }}</div>
+        <div class="result" v-if="computedEntry">
+            <div class="scroll">
+                <div class="word">{{ computedEntry?.word }}</div>
                 <div
-                    class="detail"
-                    v-for="text, idx in def.definitions"
+                    class="definition"
+                    v-for="def, idx in computedEntry?.definitions"
                     :key="idx"
-                >{{ text }}</div>
+                >
+                    <div class="part">{{ def.part }}</div>
+                    <div
+                        class="detail"
+                        v-for="text, idx in def.definitions"
+                        :key="idx"
+                    >{{ text }}</div>
+                </div>
+            </div>
+            <div class="actions">
+                <van-button type="success" block square @click="showAddToStudyList = true">Add to study list</van-button>
             </div>
         </div>
         <div class="not-found" v-else>
@@ -21,28 +26,52 @@
         <div class="loading" v-if="loading">
             <van-loading />
         </div>
+        <van-dialog
+            v-model:show="showAddToStudyList"
+            :show-confirm-button="false"
+            title="Which study list"
+            show-cancel-button
+        >
+            <van-cell
+                v-for="item in vocabularyStore.studyLists"
+                :key="item.id"
+                :title="item.name"
+                @click="addToStudyList(item.id)"
+            />
+            <OverlayLoading :loading="adding" />
+        </van-dialog>
     </div>
 </template>
 
 <style lang="less" scoped>
 .word-entry {
     position: relative;
-    overflow: scroll;
-    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
     .result {
-        .word {
-            font-size: 2.5rem;
-        }
-        .definition {
-            .part {
-                font-size: 1.5rem;
-                font-style: italic;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        .scroll {
+            flex: 1;
+            overflow: scroll;
+            padding: 1.5rem;
+            .word {
+                font-size: 2.5rem;
             }
-            .detail {
-                font-size: 1rem;
+            .definition {
+                .part {
+                    font-size: 1.5rem;
+                    font-style: italic;
+                }
+                .detail {
+                    font-size: 1rem;
+                }
             }
         }
+        
     }
+    
     .loading {
         position: absolute;
         width: 100%;
@@ -60,14 +89,32 @@
 <script setup lang="ts">
 import type { WordEntry } from '@/api';
 import { dictionaryApi } from '@/remote';
+import { useVocabularyStore } from '@/stores/vocabulary';
 import { ref, watch } from 'vue';
+import OverlayLoading from './OverlayLoading.vue'
+import { computed } from 'vue';
 
 const props = defineProps<{
-    word: string|undefined;
+    word?: string;
+    entry?: WordEntry;
     height?: number;
 }>()
 const wordEntry = ref<WordEntry>()
 const loading = ref(false)
+const adding = ref(false)
+const showAddToStudyList = ref(false)
+
+const vocabularyStore = useVocabularyStore()
+
+const computedEntry = computed(() => {
+    if (props.entry) {
+        return props.entry
+    }
+    if (wordEntry.value) {
+        return wordEntry.value
+    }
+    return undefined
+})
 
 const loadWord = async () => {
     if (!props.word) {
@@ -77,7 +124,7 @@ const loadWord = async () => {
     }
     loading.value = true
     try {
-        wordEntry.value = await dictionaryApi.dictionaryWordGet({
+        wordEntry.value = await dictionaryApi.dictionariesWordGet({
             word: props.word,
         })
     } catch (e: any) {
@@ -93,9 +140,21 @@ const loadWord = async () => {
     }
 }
 
+const addToStudyList = async (studyListId: string) => {
+    adding.value = true
+    try {
+        await dictionaryApi.studylistsIdWordPost({
+            id: studyListId,
+        })
+    } finally {
+        adding.value = false
+        showAddToStudyList.value = false
+    }
+}
+
 watch(() => props.word, (n, o) => {
     console.log(n, o)
-    if (n !== o) {
+    if (n !== o && n) {
         loadWord()
     }
 }, {

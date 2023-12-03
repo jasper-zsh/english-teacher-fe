@@ -15,15 +15,61 @@
 
 import * as runtime from '../runtime';
 import type {
+  StudyList,
+  StudylistsGet200Response,
+  StudylistsIdWordPostRequest,
+  StudylistsIdWordsGet200Response,
+  StudylistsPostRequest,
   WordEntry,
+  WordInStudyList,
 } from '../models/index';
 import {
+    StudyListFromJSON,
+    StudyListToJSON,
+    StudylistsGet200ResponseFromJSON,
+    StudylistsGet200ResponseToJSON,
+    StudylistsIdWordPostRequestFromJSON,
+    StudylistsIdWordPostRequestToJSON,
+    StudylistsIdWordsGet200ResponseFromJSON,
+    StudylistsIdWordsGet200ResponseToJSON,
+    StudylistsPostRequestFromJSON,
+    StudylistsPostRequestToJSON,
     WordEntryFromJSON,
     WordEntryToJSON,
+    WordInStudyListFromJSON,
+    WordInStudyListToJSON,
 } from '../models/index';
 
-export interface DictionaryWordGetRequest {
+export interface DictionariesWordGetRequest {
     word?: string;
+}
+
+export interface DictionariesWordsIdGetRequest {
+    id: string;
+}
+
+export interface StudylistsGetRequest {
+    limit?: string;
+    cursor?: string;
+}
+
+export interface StudylistsIdGetRequest {
+    id: string;
+}
+
+export interface StudylistsIdWordPostOperationRequest {
+    id: string;
+    studylistsIdWordPostRequest?: StudylistsIdWordPostRequest;
+}
+
+export interface StudylistsIdWordsGetRequest {
+    id: string;
+    limit?: string;
+    cursor?: string;
+}
+
+export interface StudylistsPostOperationRequest {
+    studylistsPostRequest?: StudylistsPostRequest;
 }
 
 /**
@@ -41,13 +87,113 @@ export interface DictionaryApiInterface {
      * @throws {RequiredError}
      * @memberof DictionaryApiInterface
      */
-    dictionaryWordGetRaw(requestParameters: DictionaryWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>>;
+    dictionariesWordGetRaw(requestParameters: DictionariesWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>>;
 
     /**
      * 
      * Get word
      */
-    dictionaryWordGet(requestParameters: DictionaryWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry>;
+    dictionariesWordGet(requestParameters: DictionariesWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry>;
+
+    /**
+     * 
+     * @summary Get WordEntry
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    dictionariesWordsIdGetRaw(requestParameters: DictionariesWordsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>>;
+
+    /**
+     * 
+     * Get WordEntry
+     */
+    dictionariesWordsIdGet(requestParameters: DictionariesWordsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry>;
+
+    /**
+     * 
+     * @summary Paginate StudyLists
+     * @param {string} [limit] 
+     * @param {string} [cursor] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    studylistsGetRaw(requestParameters: StudylistsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudylistsGet200Response>>;
+
+    /**
+     * 
+     * Paginate StudyLists
+     */
+    studylistsGet(requestParameters: StudylistsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudylistsGet200Response>;
+
+    /**
+     * 
+     * @summary Get StudyList
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    studylistsIdGetRaw(requestParameters: StudylistsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudyList>>;
+
+    /**
+     * 
+     * Get StudyList
+     */
+    studylistsIdGet(requestParameters: StudylistsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudyList>;
+
+    /**
+     * 
+     * @summary Add word to StudyList
+     * @param {string} id 
+     * @param {StudylistsIdWordPostRequest} [studylistsIdWordPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    studylistsIdWordPostRaw(requestParameters: StudylistsIdWordPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordInStudyList>>;
+
+    /**
+     * 
+     * Add word to StudyList
+     */
+    studylistsIdWordPost(requestParameters: StudylistsIdWordPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordInStudyList>;
+
+    /**
+     * 
+     * @summary Paginate words in StudyList
+     * @param {string} id 
+     * @param {string} [limit] 
+     * @param {string} [cursor] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    studylistsIdWordsGetRaw(requestParameters: StudylistsIdWordsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudylistsIdWordsGet200Response>>;
+
+    /**
+     * 
+     * Paginate words in StudyList
+     */
+    studylistsIdWordsGet(requestParameters: StudylistsIdWordsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudylistsIdWordsGet200Response>;
+
+    /**
+     * 
+     * @summary Create StudyList
+     * @param {StudylistsPostRequest} [studylistsPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DictionaryApiInterface
+     */
+    studylistsPostRaw(requestParameters: StudylistsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudyList>>;
+
+    /**
+     * 
+     * Create StudyList
+     */
+    studylistsPost(requestParameters: StudylistsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudyList>;
 
 }
 
@@ -60,7 +206,7 @@ export class DictionaryApi extends runtime.BaseAPI implements DictionaryApiInter
      * 
      * Get word
      */
-    async dictionaryWordGetRaw(requestParameters: DictionaryWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>> {
+    async dictionariesWordGetRaw(requestParameters: DictionariesWordGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>> {
         const queryParameters: any = {};
 
         if (requestParameters.word !== undefined) {
@@ -70,7 +216,7 @@ export class DictionaryApi extends runtime.BaseAPI implements DictionaryApiInter
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/dictionary/word`,
+            path: `/dictionaries/word`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -83,8 +229,214 @@ export class DictionaryApi extends runtime.BaseAPI implements DictionaryApiInter
      * 
      * Get word
      */
-    async dictionaryWordGet(requestParameters: DictionaryWordGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry> {
-        const response = await this.dictionaryWordGetRaw(requestParameters, initOverrides);
+    async dictionariesWordGet(requestParameters: DictionariesWordGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry> {
+        const response = await this.dictionariesWordGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Get WordEntry
+     */
+    async dictionariesWordsIdGetRaw(requestParameters: DictionariesWordsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordEntry>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling dictionariesWordsIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/dictionaries/words/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => WordEntryFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Get WordEntry
+     */
+    async dictionariesWordsIdGet(requestParameters: DictionariesWordsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordEntry> {
+        const response = await this.dictionariesWordsIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Paginate StudyLists
+     */
+    async studylistsGetRaw(requestParameters: StudylistsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudylistsGet200Response>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.cursor !== undefined) {
+            queryParameters['cursor'] = requestParameters.cursor;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/studylists`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StudylistsGet200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Paginate StudyLists
+     */
+    async studylistsGet(requestParameters: StudylistsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudylistsGet200Response> {
+        const response = await this.studylistsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Get StudyList
+     */
+    async studylistsIdGetRaw(requestParameters: StudylistsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudyList>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling studylistsIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/studylists/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StudyListFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Get StudyList
+     */
+    async studylistsIdGet(requestParameters: StudylistsIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudyList> {
+        const response = await this.studylistsIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Add word to StudyList
+     */
+    async studylistsIdWordPostRaw(requestParameters: StudylistsIdWordPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WordInStudyList>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling studylistsIdWordPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/studylists/{id}/word`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: StudylistsIdWordPostRequestToJSON(requestParameters.studylistsIdWordPostRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => WordInStudyListFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Add word to StudyList
+     */
+    async studylistsIdWordPost(requestParameters: StudylistsIdWordPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WordInStudyList> {
+        const response = await this.studylistsIdWordPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Paginate words in StudyList
+     */
+    async studylistsIdWordsGetRaw(requestParameters: StudylistsIdWordsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudylistsIdWordsGet200Response>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling studylistsIdWordsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.cursor !== undefined) {
+            queryParameters['cursor'] = requestParameters.cursor;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/studylists/{id}/words`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StudylistsIdWordsGet200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Paginate words in StudyList
+     */
+    async studylistsIdWordsGet(requestParameters: StudylistsIdWordsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudylistsIdWordsGet200Response> {
+        const response = await this.studylistsIdWordsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * 
+     * Create StudyList
+     */
+    async studylistsPostRaw(requestParameters: StudylistsPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StudyList>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/studylists`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: StudylistsPostRequestToJSON(requestParameters.studylistsPostRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StudyListFromJSON(jsonValue));
+    }
+
+    /**
+     * 
+     * Create StudyList
+     */
+    async studylistsPost(requestParameters: StudylistsPostOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StudyList> {
+        const response = await this.studylistsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

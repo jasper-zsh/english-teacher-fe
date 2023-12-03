@@ -3,8 +3,7 @@
         <div class="messages">
             <van-list v-if="ws">
                 <div ref="innerRef">
-                    <ChatMessage
-                        :ref="msgRef"
+                    <ChatMessage :ref="msgRef"
                         v-for="msg in messages"
                         :key="msg.id"
                         :message="msg"
@@ -25,11 +24,9 @@
             Click to stop speaking
         </div>
 
-        <van-overlay :show="showWord" @click="showWord = false">
-            <div class="word-panel">
-                <WordEntry :word="currentWord" />
-            </div>
-        </van-overlay>
+        <van-popup v-model:show="showWord" position="bottom">
+            <WordEntry :word="currentWord" />
+        </van-popup>
     </div>
 </template>
 

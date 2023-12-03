@@ -16,6 +16,11 @@ const router = createRouter({
           component: () => import('@/views/ConversationListView.vue')
         },
         {
+          path: '/vocabulary',
+          name: 'vocabulary',
+          component: () => import('@/views/VocabularyView.vue')
+        },
+        {
           path: '/profile',
           name: 'profile',
           component: () => import('@/views/ProfileView.vue')
@@ -25,19 +30,25 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      component: () => import('@/views/LoginView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('../views/RegisterView.vue'),
+      component: () => import('@/views/RegisterView.vue'),
     },
     {
       path: '/conversations/:id',
       name: 'conversation',
-      component: () => import('../views/ConversationView.vue'),
+      component: () => import('@/views/ConversationView.vue'),
       props: true
     },
+    {
+      path: '/studylist/:studyListId',
+      name: 'studylist',
+      component: () => import('@/views/StudyListView.vue'),
+      props: true
+    }
   ]
 })
 

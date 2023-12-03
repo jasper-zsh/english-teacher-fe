@@ -5,6 +5,7 @@
         </div>
         <van-tabbar route>
             <van-tabbar-item icon="comment-o" replace :to="{ name: 'conversations' }">Chat</van-tabbar-item>
+            <van-tabbar-item icon="notes-o" replace :to="{ name: 'vocabulary' }">Vocabulary</van-tabbar-item>
             <van-tabbar-item icon="user-o" replace :to="{ name: 'profile' }">Profile</van-tabbar-item>
         </van-tabbar>
     </div>
