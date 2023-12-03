@@ -9,6 +9,7 @@
                         :key="msg.id"
                         :message="msg"
                         @tts="tts"
+                        @word="word"
                     />
                 </div>
             </van-list>
@@ -23,14 +24,20 @@
         <div class="speaking" v-if="speaking" @click="stopSpeaking">
             Click to stop speaking
         </div>
+
+        <van-overlay :show="showWord" @click="showWord = false">
+            <div class="word-panel">
+                <WordEntry :word="currentWord" />
+            </div>
+        </van-overlay>
     </div>
 </template>
 
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue';
-import { useScrollParent } from '@vant/use';
 import { type Message } from '@/api'
 import ChatMessage from './ChatMessage.vue'
+import WordEntry from './WordEntry.vue'
 import { WebSocketEmitter } from '@/utils/websocket'
 
 const props = defineProps<{
@@ -38,12 +45,14 @@ const props = defineProps<{
 }>()
 
 const innerRef = ref<HTMLDivElement>()
-const listScroll = useScrollParent(innerRef);
 const messages = ref<Message[]>([])
 const text = ref('')
 const speaking = ref(false)
 const ws = ref<WebSocketEmitter>()
 const msgRefs: {[key: string]: InstanceType<typeof ChatMessage>} = {}
+const showWord = ref(false)
+const currentWord = ref<string>()
+const wordHeight = ref(0)
 
 const connect = () => {
     // @ts-ignore
@@ -82,9 +91,6 @@ const gotForwardMessage = (msg: any) => {
             behavior: 'smooth',
             block: 'end',
         })
-        // listScroll.value?.scrollTo({
-        //     top: innerRef.value!.clientHeight
-        // })
     })
 }
 
@@ -159,6 +165,11 @@ const tts = (msg: Message) => {
     ws.value?.send('tts', msg)
 }
 
+const word = (word: string) => {
+    currentWord.value = word
+    showWord.value = true
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -193,6 +204,16 @@ const tts = (msg: Message) => {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.word-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    border-radius: 1rem 1rem 0 0;
+    background-color: white;
 }
 
 </style>

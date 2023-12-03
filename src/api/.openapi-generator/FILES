@@ -1,5 +1,6 @@
 apis/AuthApi.ts
-apis/ClientApi.ts
+apis/ConversationApi.ts
+apis/DictionaryApi.ts
 apis/index.ts
 index.ts
 models/Conversation.ts
@@ -8,6 +9,8 @@ models/LoginResponse.ts
 models/Message.ts
 models/RegisterRequest.ts
 models/User.ts
+models/WordDefinition.ts
+models/WordEntry.ts
 models/WsResponse.ts
 models/index.ts
 runtime.ts

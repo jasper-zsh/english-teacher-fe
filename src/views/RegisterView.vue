@@ -1,20 +1,22 @@
 <template>
-    <div class="login-view">
+    <div class="register-view">
         <van-nav-bar
-            title="Login"
+            title="Register"
+            left-arrow
+            @click-left="back"
         />
-        <van-form @submit="login">
-            <van-cell-group inset title="Login to start your english tour!">
+        <van-form @submit="registerAndLogin">
+            <van-cell-group inset title="First you need an account">
                 <van-field
+                    v-model="username"
                     name="username"
-                    v-model="username" 
                     label="Username"
                     placeholder="John Doae"
                     :rules="[{ required: true, message: 'Username is required' }]"
                 />
                 <van-field
-                    type="password"
                     v-model="password"
+                    type="password"
                     name="password"
                     label="Password"
                     placeholder="Password"
@@ -22,16 +24,15 @@
                 />
             </van-cell-group>
             <div class="actions">
-                <van-button round block type="primary" native-type="submit">Login</van-button>
-                <van-button round block :to="{ name: 'register' }">Register & Login</van-button>
+                <van-button round block type="primary" native-type="submit">Register & Login</van-button>
             </div>
             
         </van-form>
     </div>
 </template>
 
-<style lang="less">
-.login-view {
+<style lang="less" scoped>
+.register-view {
     .actions {
         padding: 2rem;
         
@@ -43,23 +44,34 @@
 </style>
 
 <script setup lang="ts">
-import { authApi } from '@/remote';
-import { showNotify } from 'vant';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { showNotify } from 'vant';
+import { authApi } from '@/remote';
+import type { ResponseError } from '@/api';
+import { ref } from 'vue';
 import 'vant/es/notify/style';
-
-const router = useRouter();
 
 const username = ref('');
 const password = ref('');
+const router = useRouter();
 
-const login = async () => {
+const back = () => {
+    history.back()
+}
+
+const registerAndLogin = async (data: any) => {
+    const { username, password } = data;
     try {
+        await authApi.authRegisterPost({
+            registerRequest: {
+                username,
+                password,
+            },
+        });
         await authApi.authLoginPost({
             loginRequest: {
-                username: username.value,
-                password: password.value,
+                username,
+                password,
             }
         })
         showNotify({
@@ -70,11 +82,18 @@ const login = async () => {
             name: 'conversations',
         })
     } catch (e: any) {
+        console.log(e)
         switch (e.response.status) {
-            case 401:
+            case 409:
                 showNotify({
                     type: 'warning',
-                    message: 'Wrong username or password',
+                    message: 'User exists',
+                })
+                break;
+            default:
+                showNotify({
+                    type: 'warning',
+                    message: 'Register failed',
                 })
                 break;
         }

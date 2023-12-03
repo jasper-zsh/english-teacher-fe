@@ -28,10 +28,13 @@ declare module 'vue' {
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanField: typeof import('vant/es')['Field']
+    VanFloatingPanel: typeof import('vant/es')['FloatingPanel']
     VanForm: typeof import('vant/es')['Form']
+    VanIcon: typeof import('vant/es')['Icon']
     VanList: typeof import('vant/es')['List']
     VanLoading: typeof import('vant/es')['Loading']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanOverlay: typeof import('vant/es')['Overlay']
     VanPasswordInput: typeof import('vant/es')['PasswordInput']
     VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanSwipeCell: typeof import('vant/es')['SwipeCell']
@@ -39,6 +42,7 @@ declare module 'vue' {
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
+    WordEntry: typeof import('./src/components/WordEntry.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']

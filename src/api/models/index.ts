@@ -6,4 +6,6 @@ export * from './LoginResponse';
 export * from './Message';
 export * from './RegisterRequest';
 export * from './User';
+export * from './WordDefinition';
+export * from './WordEntry';
 export * from './WsResponse';

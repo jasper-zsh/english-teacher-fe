@@ -1,4 +1,4 @@
-import { AuthApi, ClientApi, Configuration, type Middleware, type ResponseContext } from '@/api'
+import { AuthApi, Configuration, ConversationApi, DictionaryApi, type Middleware, type ResponseContext } from '@/api'
 import router from './router'
 
 class AuthMiddleware implements Middleware {
@@ -21,5 +21,6 @@ const conf = new Configuration({
     credentials: 'include',
 })
 
-export const client = new ClientApi(conf)
-export const auth = new AuthApi(conf)
+export const conversationApi = new ConversationApi(conf)
+export const authApi = new AuthApi(conf)
+export const dictionaryApi = new DictionaryApi(conf)

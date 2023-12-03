@@ -1,4 +1,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './AuthApi';
-export * from './ClientApi';
+export * from './ConversationApi';
+export * from './DictionaryApi';

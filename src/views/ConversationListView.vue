@@ -49,7 +49,7 @@
 </style>
 
 <script setup lang="ts">
-import { client } from '@/remote'
+import { conversationApi } from '@/remote'
 import { type Conversation } from '@/api/models'
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -63,7 +63,7 @@ const loading = ref(false);
 const load = async () => {
     loading.value = true;
     try {
-        const res = await client.conversationsGet();
+        const res = await conversationApi.conversationsGet();
         conversations.value = res;
     } finally {
         loading.value = false;
@@ -79,7 +79,7 @@ const alipayLoginUrl = () => {
 }
 
 const createConversation = async () => {
-    const conversation = await client.conversationsPost({})
+    const conversation = await conversationApi.conversationsPost({})
     router.push({
         name: 'conversation',
         params: {
@@ -89,7 +89,7 @@ const createConversation = async () => {
 }
 
 const deleteConversation = async (id: string) => {
-    await client.conversationsConversationIdDelete({
+    await conversationApi.conversationsConversationIdDelete({
         conversationId: id,
     })
     showSuccessToast('Deleted')

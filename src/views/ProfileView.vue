@@ -8,14 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { auth } from '@/remote';
+import { authApi } from '@/remote';
 import { showSuccessToast } from 'vant';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const logout = async () => {
-    await auth.authLogoutGet()
+    await authApi.authLogoutGet()
     showSuccessToast('Logout succeed')
     router.replace({
         name: 'login',
